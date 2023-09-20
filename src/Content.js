@@ -1,47 +1,15 @@
-import {
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  IconButton,
-  ListItemButton,
-  ListItem,
-  ListItemText,
-  TextField
-} from '@mui/material'
-import { Delete as DeleteIcon, Add as AddIcon} from '@mui/icons-material';
+import AddItem from './AddItem'
+import ItemList from './ItemList';
+import SearchItem from './SearchItem';
+import { useState } from 'react'
 
-function Content({ items, handleCheck, handleDelete, newItem, setNewItem, handeleSubmit }) {
+function Content({ items, handleCheck, handleDelete, addItemAction }) {
+  const [search, setSearch] = useState('');
   return (
     <main>
-      <TextField
-          required
-          id="addItem"
-          defaultValue={newItem}
-          onChange={(event) => setNewItem(event.target.value)}
-        />
-        <IconButton>
-          <AddIcon />
-        </IconButton>
-      <FormGroup>
-        {items.map((item) => (          
-          <ListItem
-            secondaryAction={
-              <Checkbox
-                checked={item.checked}
-                onChange={() => handleCheck(item.id)}
-              />
-            }
-            label={item.item}
-          >
-            <ListItemText
-                    primary={item.item}
-                  />
-            <ListItemButton onClick={() => handleDelete(item.id)}>
-              <DeleteIcon />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </FormGroup>
+      <AddItem addItemAction={addItemAction} validExpression={/.{3,}/} errorMessage={"At least 3 characters"} />
+      <SearchItem search={search} setSearch={setSearch} />
+      <ItemList items={items.filter(item => ((item.item).toLowerCase()).includes(search.toLowerCase()))} handleCheck={handleCheck} handleDelete={handleDelete} />
     </main>
   );
 }

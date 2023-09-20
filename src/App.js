@@ -4,43 +4,36 @@ import Footer from "./Footer";
 import { useState } from "react";
 
 function App() {
+  const [items, setItems] = useState(JSON.parse(localStorage.getItem('shoppingList')));
+
   const handleCheck = (id) => {
     const listItems = items.map((item) =>
       item.id === id
         ? {
-            ...item,
-            checked: !item.checked,
-          }
+          ...item,
+          checked: !item.checked,
+        }
         : item
     );
 
-    setItems(listItems);
+    setAndSaveItems(listItems)
   };
   const handleDelete = (id) => {
     const listItems = items.filter((item) => item.id !== id);
-    setItems(listItems);
+    setAndSaveItems(listItems)
   };
-  const handleSubmit = (e) => {
-    console.log(newItem);
+
+  const setAndSaveItems = (newItems) => {
+    setItems(newItems)
+    localStorage.setItem('shoppingList', JSON.stringify(newItems))
   }
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      checked: false,
-      item: "Item 1",
-    },
-    {
-      id: 2,
-      checked: false,
-      item: "Item 2",
-    },
-    {
-      id: 3,
-      checked: false,
-      item: "Item 3",
-    },
-  ]);
-  const [newItem, setNewItem] = useState('')
+
+  const addItemAction = (item) => {
+    const id = items.length ? items[items.length - 1].id + 1 : 1
+    const newItem = { id, checked: false, item }
+    const listItems = [...items, newItem]
+    setAndSaveItems(listItems)
+  }
 
   return (
     <div className="App">
@@ -49,9 +42,7 @@ function App() {
         items={items}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
-        newItem={newItem}
-        setNewItem={setNewItem}
-        handleSubmit={handleSubmit}
+        addItemAction={addItemAction}
       />
       <Footer length={items.length} />
     </div>
